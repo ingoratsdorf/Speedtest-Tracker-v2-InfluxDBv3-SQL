@@ -6,3 +6,4 @@ This dashboard shows data collected by Speedtest Tracker v2 https://github.com/a
 Dashboard based on the excellent work by [@masterwishx](https://github.com/masterwishx/Speedtest-Tracker-v2-InfluxDBv2).
 
 Screenshot
+![Screenshot](Screenshot.png)
