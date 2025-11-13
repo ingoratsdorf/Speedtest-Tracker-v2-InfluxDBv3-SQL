@@ -2,7 +2,7 @@
 
 ## Set up InfluxDB3.
 
-Create docker container with the following information:
+Create a docker container with the following information:
 (Suggest you use Alpine - if you use Proxmox just create a new Alpine container and add docker)
 
 ```yaml
@@ -97,6 +97,64 @@ Create a new database with
 `influxdb3 create database --retention-period 365d speedtest`
 
 Change the retention to what you like.
+
+## Set up Speedtest
+
+Refer to [Speedtest-Tracker](https://docs.speedtest-tracker.dev/getting-started/installation/using-docker-compose) for more information.
+I run speedtest in another docker container. Set it up with the following compose file:
+
+```yaml
+name: speedtest
+
+services:
+    speedtest:
+        container_name: speedtest
+        # I se host network mode but you can also comment out that line and use ports instaed
+        network_mode: host
+        #ports:
+        #    - 80:80
+        #    - 443:443
+        environment:
+            # - APP_DEBUG=true
+            - PUID=1000
+            - PGID=1000
+            - APP_KEY=base64:bdCZIgrKdT2eI+T1X5F4WvUqmnnDzfBEXjZq1EbaG2s=
+            - DB_CONNECTION=sqlite
+              # We run this every 2 hrs
+            - SPEEDTEST_SCHEDULE="0 */2 * * *"
+            - SPEEDTEST_SERVERS=38177
+            - PRUNE_RESULTS_OLDER_THAN=365
+            - CHART_DATETIME_FORMAT= 
+            - DATETIME_FORMAT=
+              # Adjust your timezone
+            - APP_TIMEZONE="Pacific/Auckland"
+            - DISPLAY_TIMEZONE="Pacific/Auckland"
+            - PUBLIC_DASHBOARD=true
+              # Delete the next 2 lines or change to your IP
+            - APP_URL="http://192.168.100.16"
+            - ASSET_URL="http://192.168.100.16"
+            # Mail setup
+            - MAIL_MAILER=smtp
+            - MAIL_HOST=<your mailserver address>
+            - MAIL_PORT=465 # choose your port
+            - MAIL_USERNAME=<your mail username here>
+            - MAIL_PASSWORD=<obviously your mail password here>
+            - MAIL_FROM_ADDRESS=<pick your sender address>
+            - MAIL_FROM_NAME="Speedtest Tracker"
+            - MAIL_SCHEME=smtp # smtp/smtps
+            - MAIL_ENCRYPTION=tls # tls/ssl
+        volumes:
+            - /opt/speedtest/config:/config
+            - /opt/speedtest/keys:/config/keys
+        image: lscr.io/linuxserver/speedtest-tracker:latest
+        restart: unless-stopped
+```
+
+### Start the Container
+
+You can now start the container accordingly the platform you are on.
+
+`docker compose up -d`
 
 ## Grafana Dashboard
 
