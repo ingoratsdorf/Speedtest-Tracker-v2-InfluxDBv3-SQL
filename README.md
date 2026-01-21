@@ -1,4 +1,4 @@
-# Speedtest-Tracker-v2-InfluxDBv3-SQL
+# InfluxDBv3 Speedtest-Tracker v2 (SQL)
 
 ## Set up InfluxDB3.
 
